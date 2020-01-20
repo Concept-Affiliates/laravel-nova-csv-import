@@ -37,7 +37,15 @@ class ImportController
         $sample = $import->take(10)->all();
 
         $resources = collect(Nova::$resources);
-        
+
+        // only allow '\App\Nova' resources
+        $filtered = $resources->filter(function ($value, $key) {
+            if (substr($value, 0, 8) == 'App\Nova') {
+                return true;
+            }
+        });
+        $resources = collect($filtered->all());
+
         $resources = $resources->filter(function ($resource) {
             $static_vars = (new \ReflectionClass((string) $resource))->getStaticProperties();
             
